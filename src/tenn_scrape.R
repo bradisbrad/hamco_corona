@@ -23,13 +23,14 @@ types <- read_html(tenn_link) %>%
   html_nodes('table') %>% 
   html_table() %>% 
   `[[`(type_table) %>% 
-  set_names(c('type', 'total', 'negative', 'positive')) %>%
+  set_names(c('type', 'positive', 'negative', 'total')) %>%
   as_tibble() %>% 
   filter(row_number() <= 2) %>% 
   mutate(type = c('TN Govt', 'TN Comm')) %>% 
   mutate_at(vars(total, negative, positive), olfatbones::split_numeric) %>% 
   mutate(date = dt)
 types <- distinct(bind_rows(tn_types, types))
+
 write_csv(types, 'C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\tn_types.csv')
 
 ## Counties
