@@ -13,11 +13,21 @@ hamco_row <- read_html(hamco_link) %>%
   pivot_wider(names_from = headers)
 
 dt <- read_html(hamco_link) %>% 
-  html_nodes('#dnn_ctr3740_HtmlModule_lblContent > p:nth-child(4) > span:nth-child(2)') %>% 
+  html_nodes(xpath = '/html/body/form/div[4]/div[2]/div/div[2]/section/div[1]/div/div[2]/div/div[2]/div/div/div/p[4]/span[2]') %>% 
   html_text()
 
+if(length(dt) == 0){
+  if(hour(Sys.time()) < 15){
+  dt <- Sys.Date() - 1
+  } else {
+    dt <- Sys.Date()
+  }
+} else {
+  dt <- mdy(dt)
+}
+
 hamco_row  %<>%  
-  mutate(date = mdy(dt),
+  mutate(date = dt,
          createdate = Sys.time())
 
 hamco_tbl <- read_csv('C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\hamco_tbl.csv')
