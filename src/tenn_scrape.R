@@ -10,21 +10,22 @@ if(as.numeric(format(Sys.time(), '%H')) >= 15){
 }
 
 ## Types
-tn_types <- read_csv(here::here('data/tn_types.csv'))
+tn_types <- read_csv('C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\tn_types.csv')
 types <- read_html(tenn_link) %>% 
   html_nodes('table') %>% 
   html_table() %>% 
   `[[`(1) %>% 
   set_names(c('type', 'total', 'negative', 'positive')) %>%
   as_tibble() %>% 
-  filter(type != 'Total positives in TN') %>% 
+  filter(row_number() <= 2) %>% 
   mutate(type = c('TN Govt', 'TN Comm')) %>% 
-  mutate_at(vars(total, negative, positive), as.numeric)
+  mutate_at(vars(total, negative, positive), as.numeric) %>% 
+  mutate(date = dt)
 types <- distinct(bind_rows(tn_types, types))
-write_csv(types, here::here('data/tn_types.csv'))
+write_csv(types, 'C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\tn_types.csv')
 
 ## Counties
-tn_locs <- read_csv(here::here('data/tn_locs.csv'))
+tn_locs <- read_csv('C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\tn_locs.csv')
 locs <- read_html(tenn_link) %>% 
   html_nodes('table') %>% 
   html_table() %>% 
@@ -33,10 +34,10 @@ locs <- read_html(tenn_link) %>%
   rename(cases = 2) %>% 
   mutate(date = dt)
 locs <- distinct(bind_rows(tn_locs, locs))
-write_csv(locs, here::here('data/tn_locs.csv'))
+write_csv(locs, 'C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\tn_locs.csv')
 
 ## Age Ranges
-tn_ages <- read_csv(here::here('data/tn_ages.csv'))
+tn_ages <- read_csv('C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\tn_ages.csv')
 ages <- read_html(tenn_link) %>% 
   html_nodes('table') %>% 
   html_table(header = F) %>% 
@@ -46,9 +47,10 @@ ages <- read_html(tenn_link) %>%
          cases = 2) %>% 
   mutate(cases = as.numeric(cases)) %>% 
   filter(!is.na(cases),
-         range != "")
+         range != "") %>% 
+  mutate(date = dt)
 ages <- distinct(bind_rows(tn_ages, ages))
-write_csv(ages, here::here('data/tn_ages.csv'))
+write_csv(ages, 'C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\tn_ages.csv')
 
 
 

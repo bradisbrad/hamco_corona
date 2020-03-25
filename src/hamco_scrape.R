@@ -20,9 +20,9 @@ hamco_row  %<>%
   mutate(date = mdy(dt),
          createdate = Sys.time())
 
-hamco_tbl <- read_csv(here::here('data/hamco_tbl.csv'))
+hamco_tbl <- read_csv('C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\hamco_tbl.csv')
 hamco_tbl <- distinct(bind_rows(hamco_tbl, hamco_row)) %>% 
   group_by(date) %>% 
   filter(createdate == max(createdate)) %>% 
   ungroup()
-write_csv(hamco_tbl, here::here('data/hamco_tbl.csv'))
+write_csv(hamco_tbl, 'C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\hamco_tbl.csv')
