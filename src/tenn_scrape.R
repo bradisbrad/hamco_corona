@@ -11,25 +11,41 @@ if(as.numeric(format(Sys.time(), '%H')) >= 15){
 
 ## Types
 tn_types <- read_csv('C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\tn_types.csv')
+type_table <- read_html(tenn_link) %>% 
+  html_nodes('table') %>% 
+  html_table() %>% 
+  map(names) %>% 
+  map(~any(grepl('Type', .))) %>% 
+  purrr::flatten_lgl() %>% 
+  which(.)
+
 types <- read_html(tenn_link) %>% 
   html_nodes('table') %>% 
   html_table() %>% 
-  `[[`(1) %>% 
+  `[[`(type_table) %>% 
   set_names(c('type', 'total', 'negative', 'positive')) %>%
   as_tibble() %>% 
   filter(row_number() <= 2) %>% 
   mutate(type = c('TN Govt', 'TN Comm')) %>% 
-  mutate_at(vars(total, negative, positive), as.numeric) %>% 
+  mutate_at(vars(total, negative, positive), olfatbones::split_numeric) %>% 
   mutate(date = dt)
 types <- distinct(bind_rows(tn_types, types))
 write_csv(types, 'C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\tn_types.csv')
 
 ## Counties
 tn_locs <- read_csv('C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\tn_locs.csv')
+loc_table <- read_html(tenn_link) %>% 
+  html_nodes('table') %>% 
+  html_table() %>% 
+  map(names) %>% 
+  map(~any(grepl('County', .))) %>% 
+  purrr::flatten_lgl() %>% 
+  which(.)
+
 locs <- read_html(tenn_link) %>% 
   html_nodes('table') %>% 
   html_table() %>% 
-  `[[`(4) %>% 
+  `[[`(loc_table) %>% 
   as_tibble() %>% 
   rename(cases = 2) %>% 
   mutate(date = dt)
@@ -38,14 +54,22 @@ write_csv(locs, 'C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona
 
 ## Age Ranges
 tn_ages <- read_csv('C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_corona\\data\\tn_ages.csv')
+age_table <- read_html(tenn_link) %>% 
+  html_nodes('table') %>% 
+  html_table() %>% 
+  map(names) %>% 
+  map(~any(grepl('Age', .))) %>% 
+  purrr::flatten_lgl() %>% 
+  which(.)
+
 ages <- read_html(tenn_link) %>% 
   html_nodes('table') %>% 
   html_table(header = F) %>% 
-  `[[`(3) %>% 
+  `[[`(age_table) %>% 
   as_tibble() %>% 
   rename(range = 1,
          cases = 2) %>% 
-  mutate(cases = as.numeric(cases)) %>% 
+  mutate(cases = split_numeric(cases)) %>% 
   filter(!is.na(cases),
          range != "") %>% 
   mutate(date = dt)
