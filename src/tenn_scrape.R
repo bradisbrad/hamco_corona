@@ -29,7 +29,7 @@ tn_locs <- read_csv('C:\\Users\\brad_hill\\Documents\\proj\\pers\\repo\\hamco_co
 locs <- read_html(tenn_link) %>% 
   html_nodes('table') %>% 
   html_table() %>% 
-  `[[`(2) %>% 
+  `[[`(4) %>% 
   as_tibble() %>% 
   rename(cases = 2) %>% 
   mutate(date = dt)
